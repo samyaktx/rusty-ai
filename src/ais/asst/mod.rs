@@ -1,7 +1,10 @@
 use async_openai::types::{
     CreateAssistantRequest, 
     AssistantToolsRetrieval, 
-    AssistantObject, ModifyAssistantRequest
+    AssistantObject, 
+    ModifyAssistantRequest, 
+    CreateThreadRequest, 
+    ThreadObject,
 };
 use derive_more::{From, Deref, Display};
 
@@ -114,3 +117,28 @@ pub async fn delete(oac: &OaClient, asst_id: &AsstId) -> Result<()> {
 }
 
 // endregion: --- Asst CRUD
+
+
+// region:    --- Thread
+
+pub async fn create_thred(oac: &OaClient) -> Result<ThreadId> {
+    let oa_threads = oac.threads();
+
+    let res = oa_threads
+        .create(CreateThreadRequest {
+            ..Default::default()
+        }).await?;
+
+    Ok(res.id.into())
+        
+}
+
+pub async fn get_thread(oac: &OaClient, thread_id: &ThreadId) -> Result<ThreadObject> {
+    let oa_threads = oac.threads();
+
+    let thread_obj = oa_threads.retrieve(thread_id).await?;
+
+    Ok(thread_obj)
+}
+
+// endregion: --- Thread
