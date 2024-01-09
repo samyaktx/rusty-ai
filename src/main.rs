@@ -1,6 +1,8 @@
 // region:    --- Modules
 
-use crate::ais::new_oa_client;
+use crate::ais::asst::CreateConfig;
+
+pub use self::ais::new_oa_client;
 
 pub use self::error::{Error, Result};
 
@@ -21,7 +23,12 @@ async fn main() {
 
 async fn start() -> Result<()> {
     let oac = new_oa_client()?;
-    println!("->> oac: {oac:?}");
-    
+    let asst_config = CreateConfig {
+        name: "rusty-ai-buddy".to_string(),
+        model: "gpt-3.5-turbo-1106".to_string()
+    };
+
+    let asst_id = ais::asst::create(&oac, asst_config).await?;
+    println!("->> asst_id: {asst_id}");
     Ok(())
 }
