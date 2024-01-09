@@ -1,7 +1,7 @@
 use async_openai::types::{
     CreateAssistantRequest, 
     AssistantToolsRetrieval, 
-    AssistantObject
+    AssistantObject, ModifyAssistantRequest
 };
 use derive_more::{From, Deref, Display};
 
@@ -88,6 +88,18 @@ pub async fn first_by_name(oac: &OaClient, name: &str) -> Result<Option<Assistan
         .find(|a| a.name.as_ref().map(|n| n == name).unwrap_or(false));
 
     Ok(ass_obj)
+}
+
+pub async fn upload_instructions(oac: &OaClient, asst_id: &AsstId, inst_content: String) -> Result<()> {
+    let oa_assts = oac.assistants();
+    let modify = ModifyAssistantRequest {
+        instructions: Some(inst_content),
+        ..Default::default()
+    };
+
+    oa_assts.update(asst_id, modify).await?;
+
+    Ok(())
 }
 
 pub async fn delete(oac: &OaClient, asst_id: &AsstId) -> Result<()> {
