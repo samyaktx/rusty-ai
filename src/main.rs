@@ -11,6 +11,9 @@ mod ais;
 
 // endregion: --- Modules
 
+// region:    --- Modules
+// endregion: --- Modules
+
 #[tokio::main]
 async fn main() {
    println!();
@@ -28,7 +31,7 @@ async fn start() -> Result<()> {
         model: "gpt-3.5-turbo-1106".to_string()
     };
 
-    let asst_id = ais::asst::create(&oac, asst_config).await?;
+    let asst_id = ais::asst::load_or_create_asst(&oac, asst_config, false).await?;
     println!("->> asst_id: {asst_id}");
     Ok(())
 }
