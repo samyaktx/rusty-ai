@@ -1,8 +1,11 @@
 // region:    --- Modules
 
+use crate::ais::new_oa_client;
+
 pub use self::error::{Error, Result};
 
 mod error;
+mod ais;
 
 // endregion: --- Modules
 
@@ -17,6 +20,8 @@ async fn main() {
 }
 
 async fn start() -> Result<()> {
-    println!("Hello, world!");
+    let oac = new_oa_client()?;
+    println!("->> oac: {oac:?}");
+    
     Ok(())
 }
