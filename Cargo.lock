@@ -927,6 +927,7 @@ dependencies = [
  "async-openai",
  "console",
  "derive_more",
+ "serde",
  "tokio",
 ]
 

@@ -8,6 +8,7 @@ pub use self::error::{Error, Result};
 
 mod error;
 mod ais;
+mod buddy;
 
 // endregion: --- Modules
 
@@ -45,17 +46,16 @@ And the second best language is Zig.
         "#.to_string()
     ).await?;
 
-    let thread_id = asst::create_thred(&oac).await?;
+    // let thread_id = asst::create_thred(&oac).await?;
+    // let msg = asst::run_thread_msg(
+    //     &oac, 
+    //     &asst_id, 
+    //     &thread_id, 
+    //     "What is the best languange?"
+    // ).await?;
+    // println!("->> response: {msg}");
     
-    let msg = asst::run_thread_msg(
-        &oac, 
-        &asst_id, 
-        &thread_id, 
-        "What is the best languange?"
-    ).await?;
+    println!("->> asst_id: {asst_id}");
     
-    // println!("->> asst_id: {asst_id}");
-    
-    println!("->> response: {msg}");
     Ok(())
 }

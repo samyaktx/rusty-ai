@@ -14,3 +14,5 @@ async-openai = "0.18.0"
 derive_more = { version = "0.99.17", features = ["from", "display", "deref"] }
 # -- Cli
 console = "0.15.0"
+# -- De/Serialize
+serde = { version = "1.0.0", features = ["derive"] }
