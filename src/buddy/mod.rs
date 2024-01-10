@@ -4,10 +4,11 @@ use std::path::{PathBuf, Path};
 use derive_more::{From, Deref};
 use serde::{Deserialize, Serialize};
 
-use crate::{Result, 
-    ais::{OaClient, asst::{AsstId, ThreadId, self}}, 
-    utils::files::{ensure_dir, load_from_toml}, new_oa_client
-};
+use crate::Result; 
+use crate::ais::{new_oa_client, OaClient};
+use crate::ais::asst::{self, AsstId, ThreadId}; 
+use crate::utils::files::{self,ensure_dir, load_from_toml};
+use crate::utils::cli::ico_check;
 
 use self::config::Config;
 
@@ -57,9 +58,24 @@ impl Buddy {
             config
         };
 
-        //  Todo -- Upload instructions and upload files
+        // -- Upload instructions 
+        buddy.upload_instructions().await?;
+
+        // Todo: -- Upload files
 
         Ok(buddy)
+    }
+
+    pub async fn upload_instructions(&self) -> Result<bool> {
+        let file = self.dir.join(&self.config.instructions_file);
+        if file.exists() {
+            let inst_content = files::read_to_string(&file)?;
+            asst::upload_instructions(&self.oac, &self.asst_id, inst_content).await?;
+            println!("{} Instructions uploaded", ico_check());
+            Ok(true)
+        } else {
+            Ok(false)
+        }
     }
 }
 
