@@ -9,6 +9,7 @@ pub use self::error::{Error, Result};
 mod error;
 mod ais;
 mod buddy;
+mod utils;
 
 // endregion: --- Modules
 
