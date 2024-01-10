@@ -16,3 +16,8 @@ derive_more = { version = "0.99.17", features = ["from", "display", "deref"] }
 console = "0.15.0"
 # -- De/Serialize
 serde = { version = "1.0.0", features = ["derive"] }
+serde_json = "1.0.0"         # JSON serialization file format
+toml = "0.8.0"               # A native Rust encoder and decoder of TOML-formatted files and streams
+# -- Files
+globset = "0.4.0"            # Cross platform single glob and glob set matching
+walkdir = "2.0.0"            # Recursively walk a directory.
