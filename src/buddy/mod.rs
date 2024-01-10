@@ -4,7 +4,10 @@ use std::path::PathBuf;
 use derive_more::{From, Deref};
 use serde::{Deserialize, Serialize};
 
-use crate::{Result, ais::{OaClient, asst::{AsstId, ThreadId}}};
+use crate::{Result, 
+    ais::{OaClient, asst::{AsstId, ThreadId}}, 
+    utils::files::ensure_dir
+};
 
 use self::config::Config;
 
@@ -25,7 +28,6 @@ pub struct Buddy {
 #[derive(Debug, From, Deref, Deserialize, Serialize)]
 pub struct Conv {
     thread_id: ThreadId,
-    other: String,
 }
 
 /// Public functions
@@ -37,13 +39,13 @@ impl Buddy {
 impl Buddy {
     fn data_dir(&self) -> Result<PathBuf> {
         let data_dir = self.dir.join(".buddy");
-        // ensure_dir(&data_dir)?;  // FIXME
+        ensure_dir(&data_dir)?;  
         Ok(data_dir)
     }
 
     fn data_files_dir(&self) -> Result<PathBuf> {
         let dir = self.data_dir()?.join("files");
-        // ensure_dir(&dir)?;  // FIXME
+        ensure_dir(&dir)?;  
         Ok(dir)
     }
 }
