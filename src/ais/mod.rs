@@ -5,6 +5,7 @@ use async_openai::{Client, config::OpenAIConfig};
 use crate::Result;
 
 pub mod asst;
+pub mod msg;
 
 // endregion: --- Modules
 
