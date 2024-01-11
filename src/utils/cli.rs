@@ -42,6 +42,10 @@ pub fn ico_err() -> StyledObject<&'static str> {
     style("✗").green()
 }
 
+pub fn ico_res() -> StyledObject<&'static str> {
+    style("➤").blue()
+}
+
 // endregion:    --- Icons
 
 // region:       --- Text Output
