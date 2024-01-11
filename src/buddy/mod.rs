@@ -1,5 +1,6 @@
 // region:    --- Modules
 
+use std::fs;
 use std::path::{PathBuf, Path};
 use derive_more::{From, Deref};
 use serde::{Deserialize, Serialize};
@@ -7,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use crate::Result; 
 use crate::ais::{new_oa_client, OaClient};
 use crate::ais::asst::{self, AsstId, ThreadId}; 
-use crate::utils::files::{self,ensure_dir, load_from_toml};
+use crate::utils::files::{self,ensure_dir, load_from_toml, load_from_json, save_to_json};
 use crate::utils::cli::ico_check;
 
 use self::config::Config;
@@ -76,6 +77,42 @@ impl Buddy {
         } else {
             Ok(false)
         }
+    }
+
+    pub async fn load_or_create_conv(&self, recreate: bool) -> Result<Conv> {
+        let conv_file = self.data_dir()?.join("conv.json");
+
+        if recreate && conv_file.exists() {
+            fs::remove_file(&conv_file)?;
+        }
+
+        let conv = if let Ok(conv) = load_from_json::<Conv>(&conv_file) {
+            asst::get_thread(&self.oac, &conv.thread_id)
+                .await
+                .map_err(|_| format!("Cannot find thread_id for {:?}", conv))?;
+            println!("{} Conversation loaded", ico_check());
+            conv
+        } else {
+            let thread_id = asst::create_thred(&self.oac).await?;
+            println!("{} Conversation created", ico_check());
+            let conv = thread_id.into();
+            save_to_json(&conv_file, &conv)?;
+            conv
+        };
+
+        Ok(conv)
+    }
+
+    pub async fn chat(&self, conv: &Conv, msg: &str) -> Result<String> {
+        let res = asst::run_thread_msg(
+            &self.oac, 
+            &self.asst_id, 
+            &conv.thread_id, 
+            msg
+        ).await?;
+
+        Ok(res)
+
     }
 }
 
