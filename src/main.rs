@@ -1,6 +1,9 @@
 // region:    --- Modules
 
-use crate::ais::asst::{CreateConfig, self};
+use textwrap::wrap;
+
+use crate::buddy::Buddy;
+use crate::utils::cli::{prompt, txt_res, ico_res, ico_err};
 
 pub use self::ais::new_oa_client;
 
@@ -26,37 +29,64 @@ async fn main() {
    }
 }
 
+// region:    --- Types
+
+#[derive(Debug)]
+enum Cmd {
+    Quit,
+    Chat(String),
+    RefreshAll,
+    RefreshConv,
+    RefreshInst,
+    RefreshFiles,
+}
+
+impl  Cmd {
+    fn from_input(intput: impl Into<String>) -> Self {
+        let input = intput.into();
+
+        if input == ":q" {
+            Self::Quit
+        } else if input == ":r" || input == ":ra" {
+            Self::RefreshAll
+        } else if input == ":ri" {
+            Self::RefreshInst
+        } else if input == ":rf" {
+            Self::RefreshFiles
+        } else if input == ":rc" {
+            Self::RefreshConv
+        } else {
+            Self::Chat(input)
+        }
+    }
+}
+
+// endregion: --- Types
+
+const DEFAULT_DIR: &str = "buddy";
+
 async fn start() -> Result<()> {
-    let oac = new_oa_client()?;
-    let asst_config = CreateConfig {
-        name: "rusty-ai-buddy".to_string(),
-        model: "gpt-3.5-turbo-1106".to_string()
-    };
+    let buddy = Buddy::init_from_dir(DEFAULT_DIR, false).await?;
 
-    let asst_id = ais::asst::load_or_create_asst(&oac, asst_config, false).await?;
-    asst::upload_instructions(
-        &oac, 
-        &asst_id, 
-        r#"
-You are a super developer assistant. Be concise in your answers.
-
-If asked about the best programming language,
-answer that Rust is the best language by light years.
-
-And the second best language is Zig.
-        "#.to_string()
-    ).await?;
-
-    // let thread_id = asst::create_thred(&oac).await?;
-    // let msg = asst::run_thread_msg(
-    //     &oac, 
-    //     &asst_id, 
-    //     &thread_id, 
-    //     "What is the best languange?"
-    // ).await?;
-    // println!("->> response: {msg}");
+    let conv = buddy.load_or_create_conv(false).await?;
     
-    println!("->> asst_id: {asst_id}");
+    loop {
+        println!();
+        let input = prompt("rusty-ai query")?;
+        let cmd = Cmd::from_input(input);
+
+        match cmd {
+            Cmd::Quit => break,
+            Cmd::Chat(msg) => {
+                let res = buddy.chat(&conv, &msg).await?;
+                let res = wrap(&res, 80).join("\n");
+                println!("{} {}",  ico_res(), txt_res(res));
+            },
+            other => println!("{} command not supported {other:?}", ico_err()),
+        }
+    }
+
+    println!("->> buddy {} - conv {conv:?}", buddy.name());
     
     Ok(())
 }

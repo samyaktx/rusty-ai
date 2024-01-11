@@ -18,6 +18,7 @@ use tokio::time::sleep;
 use crate::Result;
 use crate::ais::OaClient;
 use crate::ais::msg::{user_msg, get_text_content};
+use crate::utils::cli::{ico_deleted_ok, ico_check};
 
 // region:    --- Constants
 
@@ -74,17 +75,17 @@ pub async fn load_or_create_asst(
         delete(oac, asst_id_ref).await?;
         asst_id.take();
 
-        println!("Assistant {} deleted", config.name);
+        println!("{} Assistant {} deleted", ico_deleted_ok(), config.name);
     }
 
     // -- Create if needed
     if let Some(asst_id) = asst_id {
-        println!("Assisted {} loaded", config.name);
+        println!("{} Assisted {} loaded", ico_check(), config.name);
         Ok(asst_id)
     } else {
         let asst_name = config.name.clone();
         let asst_id = create(oac, config).await?;
-        println!("{} Assistant created", asst_name);
+        println!("{} Assistant {} created", ico_check(), asst_name);
         Ok(asst_id)
     }
 
