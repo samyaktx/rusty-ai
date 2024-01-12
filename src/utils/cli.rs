@@ -27,11 +27,11 @@ pub fn ico_check() -> StyledObject<&'static str> {
 }
 
 pub fn ico_uploading() -> StyledObject<&'static str> {
-    style("⇭").yellow()
+    style("♻︎").yellow()
 }
 
 pub fn ico_uploaded() -> StyledObject<&'static str> {
-    style("⇭").green()
+    style("❄︎").green()
 }
 
 pub fn ico_deleted_ok() -> StyledObject<&'static str> {
