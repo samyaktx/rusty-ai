@@ -3,10 +3,8 @@
 use textwrap::wrap;
 
 use crate::buddy::Buddy;
-use crate::utils::cli::{prompt, txt_res, ico_res, ico_err};
-
+use crate::utils::cli::{prompt, txt_res, ico_res};
 pub use self::ais::new_oa_client;
-
 pub use self::error::{Error, Result};
 
 mod error;
@@ -14,9 +12,6 @@ mod ais;
 mod buddy;
 mod utils;
 
-// endregion: --- Modules
-
-// region:    --- Modules
 // endregion: --- Modules
 
 #[tokio::main]
@@ -66,9 +61,9 @@ impl  Cmd {
 const DEFAULT_DIR: &str = "buddy";
 
 async fn start() -> Result<()> {
-    let buddy = Buddy::init_from_dir(DEFAULT_DIR, false).await?;
+    let mut buddy = Buddy::init_from_dir(DEFAULT_DIR, false).await?;
 
-    let conv = buddy.load_or_create_conv(false).await?;
+    let mut conv = buddy.load_or_create_conv(false).await?;
     
     loop {
         println!();
@@ -82,7 +77,21 @@ async fn start() -> Result<()> {
                 let res = wrap(&res, 80).join("\n");
                 println!("{} {}",  ico_res(), txt_res(res));
             },
-            other => println!("{} command not supported {other:?}", ico_err()),
+            Cmd::RefreshAll => {
+                buddy = Buddy::init_from_dir(DEFAULT_DIR, true).await?;
+                conv = buddy.load_or_create_conv(true).await?;
+            },
+            Cmd::RefreshConv => {
+                conv = buddy.load_or_create_conv(true).await?;
+            },
+            Cmd::RefreshInst => {
+                buddy.upload_instructions().await?;
+                conv = buddy.load_or_create_conv(true).await?;
+            },
+            Cmd::RefreshFiles => {
+                buddy.upload_files(true).await?;
+                conv = buddy.load_or_create_conv(true).await?;
+            }
         }
     }
 
