@@ -120,9 +120,18 @@ pub async fn upload_instructions(oac: &OaClient, asst_id: &AsstId, inst_content:
 
 pub async fn delete(oac: &OaClient, asst_id: &AsstId) -> Result<()> {
     let oa_assts = oac.assistants();
+    let oa_files = oac.files();
 
-    // Todo: delete files
-    
+    // -- First delete the files associated to this assistant
+    for file_id in get_files_hashmap(oac, asst_id).await?.into_values() {
+        let del_res = oa_files.delete(&file_id).await;
+        // Note: might be already deleted, that's ok for now.
+        if del_res.is_ok() {
+            println!("{} file deleted - {file_id}", ico_deleted_ok());
+        }
+    }
+
+    // Note: No need to delete assistant files since we delete the assistant.
     // -- Delete assistant
     oa_assts.delete(asst_id).await?;
 
