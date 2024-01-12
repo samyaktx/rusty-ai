@@ -9,8 +9,9 @@ use crate::Result;
 use crate::ais::{new_oa_client, OaClient};
 use crate::ais::asst::{self, AsstId, ThreadId}; 
 use crate::utils::files::{self, 
-    ensure_dir, load_from_toml, load_from_json, 
-    save_to_json, list_files, bundle_to_file
+    ensure_dir, load_from_toml, 
+    load_from_json, save_to_json, 
+    list_files, bundle_to_file
 };
 use crate::utils::cli::ico_check;
 
@@ -65,7 +66,8 @@ impl Buddy {
         // -- Upload instructions 
         buddy.upload_instructions().await?;
 
-        // Todo: -- Upload files
+        // -- Upload files
+        buddy.upload_files(false).await?;
 
         Ok(buddy)
     }
