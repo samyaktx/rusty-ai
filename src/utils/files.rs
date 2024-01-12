@@ -1,7 +1,7 @@
 use std::{
     fs::{self, File}, 
     path::{Path, PathBuf}, 
-    io::{BufReader, BufWriter, BufRead, Write}
+    io::{BufReader, BufWriter, BufRead, Write}, ffi::OsStr
 };
 use globset::{GlobSet, GlobSetBuilder, Glob};
 use walkdir::WalkDir;
@@ -159,3 +159,24 @@ pub fn bundle_to_file(files: Vec<PathBuf>, dst_file: &Path) -> Result<()> {
 }
 
 // endregion:    --- File Bundler
+
+// region:       --- XFile
+
+/// Trait that has methods that returns
+/// the `&str` when ok, and when none or err, returns ""
+pub trait XFile {
+    fn x_file_name(&self) -> &str;
+    fn x_extension(&self) -> &str;
+}
+
+impl XFile for Path {
+    fn x_file_name(&self) -> &str {
+        self.file_name().and_then(OsStr::to_str).unwrap_or("")
+    }
+
+    fn x_extension(&self) -> &str {
+        self.extension().and_then(OsStr::to_str).unwrap_or("")
+    }
+}
+
+// endregion:    --- XFile
