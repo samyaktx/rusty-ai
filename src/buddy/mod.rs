@@ -8,7 +8,10 @@ use serde::{Deserialize, Serialize};
 use crate::Result; 
 use crate::ais::{new_oa_client, OaClient};
 use crate::ais::asst::{self, AsstId, ThreadId}; 
-use crate::utils::files::{self,ensure_dir, load_from_toml, load_from_json, save_to_json};
+use crate::utils::files::{self, 
+    ensure_dir, load_from_toml, load_from_json, 
+    save_to_json, list_files, bundle_to_file
+};
 use crate::utils::cli::ico_check;
 
 use self::config::Config;
@@ -77,6 +80,77 @@ impl Buddy {
         } else {
             Ok(false)
         }
+    }
+
+    pub async fn upload_files(&self, recreate: bool) -> Result<u32> {
+        let mut num_uploaded = 0;
+
+        // the .buddy/files
+        let data_files_dir = self.data_files_dir()?;
+
+        // -- Clean the .buddy/file left over.
+        let exclude_element = format!("*{}*", &self.asst_id);
+        for file in list_files(
+            &data_files_dir, Some(&["*.rs", "*.md"]), 
+            Some(&[&exclude_element]),
+        )? {
+            let file_str = file.to_string_lossy();
+            // Safegaurd
+            if !file_str.contains(".buddy") {
+                return Err(
+                    format!("Error should not delete: '{}'", file_str).into()
+                );
+            }
+            // delete file
+            fs::remove_file(&file)?;
+        }
+
+        // --- Generate and upload the .buddy/files bundle files.
+        for bundle in self.config.file_bundles.iter() {
+            let src_dir = self.dir.join(&bundle.src_dir);
+
+            if src_dir.is_dir() {
+                let src_globs: Vec<&str> = bundle.src_globs
+                    .iter()
+                    .map(AsRef::as_ref)
+                    .collect();
+
+                let files = list_files(&src_dir, Some(&src_globs), None)?;
+
+                if !files.is_empty() {
+                    // Compute bundle file name
+                    let buddle_file_name = format!(
+                        "{}-{}-bundle-{}.{}",
+                        self.name(),
+                        bundle.bundle_name,
+                        self.asst_id,
+                        bundle.dst_ext
+                    );
+
+                    let bundle_file = self.data_files_dir()?.join(buddle_file_name);
+
+                    // If it doesn't exist, then we will force a reupload.
+                    let force_reupload = recreate || !bundle_file.exists();
+
+                    // Rebundle no matter if exist or not (to check).
+                    bundle_to_file(files, &bundle_file)?;
+
+                    // Upload
+                    let (_, uploaded) = asst::upload_file_by_name(
+                        &self.oac,
+                        &self.asst_id,
+                        &bundle_file,
+                        force_reupload,
+                    ).await?;
+
+                    if uploaded {
+                        num_uploaded += 1;
+                    }
+                }
+            }
+        }
+
+        Ok(num_uploaded)
     }
 
     pub async fn load_or_create_conv(&self, recreate: bool) -> Result<Conv> {
