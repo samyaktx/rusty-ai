@@ -19,7 +19,7 @@ async fn main() {
    println!();
 
    match start().await {
-       Ok(_) => println!("\nBye!\n"),
+       Ok(_) => println!("\n{} Bye, See you\n", ico_res()),
        Err(e) => println!("\nError: {}\n", e),
    }
 }
@@ -34,6 +34,7 @@ enum Cmd {
     RefreshConv,
     RefreshInst,
     RefreshFiles,
+    Help,
 }
 
 impl  Cmd {
@@ -42,14 +43,16 @@ impl  Cmd {
 
         if input == ":q" {
             Self::Quit
-        } else if input == ":r" || input == ":ra" {
+        } else if input == ":ra" || input == ":RA" {
             Self::RefreshAll
-        } else if input == ":ri" {
+        } else if input == ":ri" || input == ":RI" {
             Self::RefreshInst
-        } else if input == ":rf" {
+        } else if input == ":rf" || input == ":RF" {
             Self::RefreshFiles
-        } else if input == ":rc" {
+        } else if input == ":rc" || input == ":RC" {
             Self::RefreshConv
+        } else if input == ":h" || input == ":H" {
+            Self::Help
         } else {
             Self::Chat(input)
         }
@@ -91,11 +94,21 @@ async fn start() -> Result<()> {
             Cmd::RefreshFiles => {
                 buddy.upload_files(true).await?;
                 conv = buddy.load_or_create_conv(true).await?;
+            }, 
+            Cmd::Help => {
+                println!("
+{} :ra  - refresh all
+{} :ri - refresh instructions
+{} :rf - refresh files
+{} :rc - refresh converstion
+{} :h  - help
+{} :q  - quit",
+ico_res(), ico_res(), ico_res(), ico_res(), ico_res(), ico_res());
             }
         }
     }
 
-    println!("->> buddy {} - conv {conv:?}", buddy.name());
+    // println!("\n{} buddy {} - conv {conv:?}", ico_res(), buddy.name());
     
     Ok(())
 }
