@@ -5,7 +5,7 @@ The vision for Rusty-ai-buddy is to create a cli based AI assistant that leverag
 ## cargo commands
 
 ```sh
-# enter your openai api key
+# open terminal and enter your openai api key
 export OPENAI_API_KEY=sk-{} 
 
 # build everything
