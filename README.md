@@ -1,6 +1,6 @@
-# rusty-ai-buddy
+# rusty-ai
 
-The vision for Rusty-ai-buddy is to create a cli based AI assistant that leverages AI assistant services using OpenAI API.
+The vision for rusty-ai is to create a cli based AI assistant that leverages AI assistant services using OpenAI API.
 
 ## cargo commands
 
