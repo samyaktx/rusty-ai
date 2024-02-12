@@ -96,14 +96,10 @@ async fn start() -> Result<()> {
                 conv = buddy.load_or_create_conv(true).await?;
             }, 
             Cmd::Help => {
-                println!("
-{} :ra  - refresh all
-{} :ri - refresh instructions
-{} :rf - refresh files
-{} :rc - refresh converstion
-{} :h  - help
-{} :q  - quit",
-ico_res(), ico_res(), ico_res(), ico_res(), ico_res(), ico_res());
+                println!(
+                    "{} :ra - refresh all\n{} :ri - refresh instructions\n{} :rf - refresh files\n{} :rc - refresh converstion\n{} :h  - help\n{} :q  - quit",
+                    ico_res(), ico_res(), ico_res(), ico_res(), ico_res(), ico_res()
+                );
             }
         }
     }
