@@ -185,10 +185,10 @@ pub async fn run_thread_msg(
     let term = Term::stdout();
 
     loop {
-        term.write_str(">")?;
+        term.write_str("♲")?;
         // -- Make the request to get the status
         let run = oac.threads().runs(thread_id).retrieve(&run.id).await?;
-        term.write_str("< ")?;
+        term.write_str("♻︎")?;
         match run.status {
             RunStatus::Completed => {
                 term.write_str("\n")?;
