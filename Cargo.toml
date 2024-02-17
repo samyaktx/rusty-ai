@@ -1,5 +1,5 @@
 [package]
-name = "rusty-ai-buddy"
+name = "rusty-ai"
 version = "0.1.0"
 edition = "2021"
 
@@ -13,7 +13,7 @@ async-openai = "0.18.0"
 # -- Macros for traits
 derive_more = { version = "0.99.17", features = ["from", "display", "deref"] }
 # -- Cli
-console = "0.15.0"
+console = "0.15.0"           # A terminal and console abstraction for Rust
 dialoguer = "0.11.0"         # command line prompting library
 textwrap = "0.16.0"          # library for word wrapping, indenting, and dedenting strings
 # -- De/Serialize
