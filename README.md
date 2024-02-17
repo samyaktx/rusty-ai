@@ -5,8 +5,11 @@ The vision for rusty-ai is to create a cli based AI assistant that leverages AI 
 ## cargo commands
 
 ```sh
-# open terminal and enter your openai api key
-export OPENAI_API_KEY=sk-{} 
+# On linux/mac terminal and enter your openai api key
+export OPENAI_API_KEY='sk-...' 
+
+# On Windows Powershell
+$Env:OPENAI_API_KEY='sk-...'
 
 # build everything
 cargo build
