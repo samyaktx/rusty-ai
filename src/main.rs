@@ -2,14 +2,14 @@
 
 use textwrap::wrap;
 
-use crate::buddy::Buddy;
+use crate::rusty_ai::RustyAI;
 use crate::utils::cli::{prompt, txt_res, ico_res};
 pub use self::ais::new_oa_client;
 pub use self::error::{Error, Result};
 
 mod error;
 mod ais;
-mod buddy;
+mod rusty_ai;
 mod utils;
 
 // endregion: --- Modules
@@ -61,12 +61,12 @@ impl  Cmd {
 
 // endregion: --- Types
 
-const DEFAULT_DIR: &str = "buddy";
+const DEFAULT_DIR: &str = "rusty_ai";
 
 async fn start() -> Result<()> {
-    let mut buddy = Buddy::init_from_dir(DEFAULT_DIR, false).await?;
+    let mut rusty_ai = RustyAI::init_from_dir(DEFAULT_DIR, false).await?;
 
-    let mut conv = buddy.load_or_create_conv(false).await?;
+    let mut conv = rusty_ai.load_or_create_conv(false).await?;
     
     loop {
         println!();
@@ -76,24 +76,24 @@ async fn start() -> Result<()> {
         match cmd {
             Cmd::Quit => break,
             Cmd::Chat(msg) => {
-                let res = buddy.chat(&conv, &msg).await?;
+                let res = rusty_ai.chat(&conv, &msg).await?;
                 let res = wrap(&res, 80).join("\n");
                 println!("{} {}",  ico_res(), txt_res(res));
             },
             Cmd::RefreshAll => {
-                buddy = Buddy::init_from_dir(DEFAULT_DIR, true).await?;
-                conv = buddy.load_or_create_conv(true).await?;
+                rusty_ai = RustyAI::init_from_dir(DEFAULT_DIR, true).await?;
+                conv = rusty_ai.load_or_create_conv(true).await?;
             },
             Cmd::RefreshConv => {
-                conv = buddy.load_or_create_conv(true).await?;
+                conv = rusty_ai.load_or_create_conv(true).await?;
             },
             Cmd::RefreshInst => {
-                buddy.upload_instructions().await?;
-                conv = buddy.load_or_create_conv(true).await?;
+                rusty_ai.upload_instructions().await?;
+                conv = rusty_ai.load_or_create_conv(true).await?;
             },
             Cmd::RefreshFiles => {
-                buddy.upload_files(true).await?;
-                conv = buddy.load_or_create_conv(true).await?;
+                rusty_ai.upload_files(true).await?;
+                conv = rusty_ai.load_or_create_conv(true).await?;
             }, 
             Cmd::Help => {
                 println!(
@@ -104,7 +104,7 @@ async fn start() -> Result<()> {
         }
     }
 
-    // println!("\n{} buddy {} - conv {conv:?}", ico_res(), buddy.name());
+    // println!("\n{} rusty_ai {} - conv {conv:?}", ico_res(), rusty_ai.name());
     
     Ok(())
 }
