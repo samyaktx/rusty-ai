@@ -2,6 +2,9 @@
 
 The vision for rusty-ai is to create a cli based AI assistant that leverages AI assistant services using OpenAI API.
 
+Checkout [demo video](https://www.youtube.com/watch?v=tGNIQHYsvLg&t=161s)
+
+
 ## cargo commands
 
 ```sh
