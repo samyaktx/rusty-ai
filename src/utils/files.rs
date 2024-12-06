@@ -166,7 +166,7 @@ pub fn bundle_to_file(files: Vec<PathBuf>, dst_file: &Path) -> Result<()> {
 /// the `&str` when ok, and when none or err, returns ""
 pub trait XFile {
     fn x_file_name(&self) -> &str;
-    fn x_extension(&self) -> &str;
+    fn _x_extension(&self) -> &str;
 }
 
 impl XFile for Path {
@@ -174,7 +174,7 @@ impl XFile for Path {
         self.file_name().and_then(OsStr::to_str).unwrap_or("")
     }
 
-    fn x_extension(&self) -> &str {
+    fn _x_extension(&self) -> &str {
         self.extension().and_then(OsStr::to_str).unwrap_or("")
     }
 }

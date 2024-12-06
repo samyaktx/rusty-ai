@@ -6,7 +6,7 @@ instructions_file = "instructions.md"
 bundle_name = "source-code"
 src_dir = "../src"
 src_globs = ["**/*.rs"]
-dst_ext = "rs"
+dst_ext = "txt"
 
 [[file_bundles]]
 bundle_name = "knowledge"
